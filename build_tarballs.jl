@@ -43,7 +43,6 @@ products = [
 
 dependencies = [
     BuildDependency("boost_jll"),
-    HostBuildDependency("Bison_jll"),
     HostBuildDependency("flex_jll"),
 ]
 
