@@ -11,12 +11,11 @@ sources = [
 script = raw"""
 cd ${WORKSPACE}/srcdir/preprocessor
 
-# Remove flex from RootFS to let use our flex from `flex_jll`
-rm -f /usr/bin/flex
+# Use flex from `flex_jll` instead of the one under /usr/bin,
+# because there is no /usr/include/FlexLexer.hh
+echo -e "[binaries]\nflex = '${host_bindir}/flex'\n" > flex.ini
 
-if [[ "${target}" == *-freebsd* ]]; then
-    export CPPFLAGS="-I${includedir}"
-elif [[ "${target}" == *-apple-* ]]; then
+if [[ "${target}" == *-apple-* ]]; then
     pushd $WORKSPACE/srcdir/MacOSX11.*.sdk
     rm -rf /opt/${target}/${target}/sys-root/System
     rm -rf /opt/${target}/${target}/sys-root/usr/include/libxml2/libxml
@@ -26,14 +25,13 @@ elif [[ "${target}" == *-apple-* ]]; then
     popd
 fi
 
-autoreconf -si
-update_configure_scripts
-./configure --prefix=$prefix  --build=${MACHTYPE} --host=${target} --disable-doc
-make -j${nproc}
-make install
-mkdir -p "${bindir}"
-strip "src/dynare-preprocessor${exeext}"
-cp "src/dynare-preprocessor${exeext}" "${bindir}"
+meson setup --cross-file="${MESON_TARGET_TOOLCHAIN}" --cross-file=flex.ini --buildtype=release build
+
+ninja -j${nproc} -v -C build
+ninja -C build install
+
+strip "${bindir}/dynare-preprocessor${exeext}"
+
 install_license COPYING
 """
 
