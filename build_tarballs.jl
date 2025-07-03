@@ -1,9 +1,9 @@
 using BinaryBuilder
 
 name = "DynarePreprocessor"
-version = v"6.4.0"
+version = v"7.0.0"
 sources = [
-    GitSource("https://git.dynare.org/Dynare/preprocessor.git", "8d72527518523620050e819e9cd59afc76862ab9"),
+    GitSource("https://git.dynare.org/Dynare/preprocessor.git", "e4ba46115a6d896b1cdec043bd5612628f7c43a5"),
 ]
 
 script = raw"""
