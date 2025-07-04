@@ -25,7 +25,9 @@ strip "${bindir}/dynare-preprocessor${exeext}"
 install_license COPYING
 """
 
-platforms = expand_cxxstring_abis(supported_platforms())
+# Use the “skip” parameter to expand the C++ string ABI on macOS and FreeBSD as well,
+# because we use GCC there too.
+platforms = expand_cxxstring_abis(supported_platforms(); skip=Returns(false))
 
 products = [
     ExecutableProduct("dynare-preprocessor", :dynare_preprocessor),
